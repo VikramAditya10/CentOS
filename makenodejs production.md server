@@ -1,0 +1,40 @@
+Install Node.js
+Creat the Node.js Application
+Install PM2
+ PM2, is a process manager for Node.js applications. PM2 provides an easy way to manage and daemonize applications
+ sudo npm install pm2@latest -g
+ pm2 start hello.js(your js script)
+ Applications that are running under PM2 will be restarted automatically if the application crashes or is killed,
+ but an additional step needs to be taken to get the application to launch on system startup (boot or reboot). 
+ Luckily, PM2 provides an easy way to do this, the startup subcommand
+ 
+ sudo pm2 startup systemd
+ 
+ To ensure PM2 knows which applications to start on boot, we need to save the current process list.
+ pm2 save
+ Stop an application with this command
+ pm2 stop example
+Restart an application with this command (specify the PM2 App name or id)
+pm2 restart example
+Install Nginx
+Now open the Nginx configuration file for editing:
+sudo vi /etc/nginx/nginx.conf
+change server_name _; to server_name your-domain;
+change
+location / {
+        }
+        to
+ location / {
+        proxy_pass http://APP_PRIVATE_IP_ADDRESS:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    Finally, provide Nginx with the ability to relay traffic through Security-Enhanced Linux (SELinux). SELinux provides a security layer that implements Mandatory Access Control (MAC) in the Linux Kernel. Each operating system object (process, file descriptor, file, etc.) is labeled with an SELinux context that defines the permissions and operations the object can perform.
+
+Nginx is labelled with the httpd_t context and as a result, has a number of configurations blocked by SELinux unless explicitly allowed. To demonstrate this, run the following command to confirm the Nginx service is labelled httpd_t:
+
+ps -eZ
